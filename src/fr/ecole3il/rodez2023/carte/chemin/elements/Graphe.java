@@ -1,19 +1,19 @@
 package fr.ecole3il.rodez2023.carte.chemin.elements;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Graphe<E> {
 
-    private List<Noeud<E>> listeNoeuds;
-    private List<Noeud<E>> listeVoisins;
-    private double matrice;
+    private Map<Noeud<E>, Map<Noeud<E>, Double>> listeNoeuds;
 
     /**
      * Crée le graphique et initialise sa liste de noeud
      */
     public Graphe() {
-        this.listeNoeuds = new ArrayList<>();
+        this.listeNoeuds = new HashMap<>();
     }
 
     /**
@@ -21,41 +21,41 @@ public class Graphe<E> {
      * @param noeud
      */
     public void ajouterNoeud(Noeud<E> noeud) {
-        this.listeNoeuds.add(noeud);
+        // Ajoute le noeud s'il n'existe pas déjà
+        if(!this.listeNoeuds.containsKey(noeud)) {
+            this.listeNoeuds.put(noeud, new HashMap<>());
+        }
     }
 
     /**
      * Ajoute une connexion (arête) entre deux noeuds
-     * @param depart
-     * @param arrivee
-     * @param cout
+     * @param depart noeud de départ
+     * @param arrivee noeud d'arrivée
+     * @param cout coût de l'arête
      */
     public void ajouterArete(Noeud<E> depart, Noeud<E> arrivee, double cout) {
         /*
          * Vérification de l'existence des noeuds depart et arrivee
          * Ajout des noeuds s'ils n'existent pas
          */
-        if (!listeNoeuds.contains(depart)) ajouterNoeud(depart);
-        if (!listeNoeuds.contains(arrivee)) ajouterNoeud(arrivee);
+        if(!listeNoeuds.containsKey(depart)) ajouterNoeud(depart);
+        if (!listeNoeuds.containsKey(arrivee)) ajouterNoeud(arrivee);
 
-        // Ajout de l'arête dans la matrice d'adjacence associée au noeud de départ
-        // todo appel matrice
+        // Liaison des deux noeuds
+        this.listeNoeuds.get(depart).put(arrivee, cout);
     }
 
     /**
      * Récupère le coût de l'arête entre deux noeuds
-     * @param depart
-     * @param arrivee
-     * @return
+     * @param depart noeud de départ
+     * @param arrivee noeud d'arrivée
+     * @return coût de l'arête (-1 si au moins un des deux noeuds n'existe pas)
      */
     public double getCoutArete(Noeud<E> depart, Noeud<E> arrivee) {
-        // Utilisation de la matrice du noeud de depart pour récupérer le cout de l'arête
-        // Si il n'y a pas de liaison entre les deux noeuds, renvoi 0
-
-
-
-        // TODO coder
-        return 0;
+        if (listeNoeuds.containsKey(depart) && listeNoeuds.get(depart).containsKey(arrivee)) {
+            return this.listeNoeuds.get(depart).get(arrivee);
+        }
+        return -1;
     }
 
     /**
@@ -63,13 +63,13 @@ public class Graphe<E> {
      * @return
      */
     public List<Noeud<E>> getNoeuds() {
-        return listeNoeuds;
+        return new ArrayList<>(this.listeNoeuds.keySet());
     }
 
     /**
      * Récupère la liste des noeuds voisins du noeud fourni en paramètre
-     * @param noeud
-     * @return
+     * @param noeud noeud pour lequel on cherche ses voisins
+     * @return liste des noeuds voisins du noeud donné
      */
     public List<Noeud<E>> getVoisins(Noeud<E> noeud) {
         return noeud.getVoisins();

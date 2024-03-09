@@ -29,7 +29,7 @@ public class Noeud<E> {
     }
 
     /**
-     * Récupère la valeur du noeud
+     * Modifie la valeur du noeud
      * @return
      */
     public void setValeur(E valeur) {
