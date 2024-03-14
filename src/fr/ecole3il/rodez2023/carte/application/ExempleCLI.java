@@ -21,9 +21,11 @@ public class ExempleCLI {
 		GenerateurCarte generateur = new GenerateurCarte();
 		Carte test = generateur.genererCarte(100,100);
 		AlgorithmeChemin algoChemin = new AlgorithmeDijkstra();
-		Chemin chemin = algoChemin.trouverChemin(test, 0, 0, 50, 50);
+		AdaptateurAlgorithme adaptateurAlgorithme = new AdaptateurAlgorithme();
+
+		Chemin chemin = adaptateurAlgorithme.trouverChemin(algoChemin, test, 0, 0, 50, 50);
 		chemin.afficherChemin();
-		chemin = algoChemin.trouverChemin(test, 0, 0, 50, 50);
+		chemin = adaptateurAlgorithme.trouverChemin(algoChemin, test, 20, 20, 50, 50);
 		chemin.afficherChemin();
 	}
 	
