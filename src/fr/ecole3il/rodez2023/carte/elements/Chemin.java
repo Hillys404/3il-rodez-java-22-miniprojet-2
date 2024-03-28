@@ -29,7 +29,6 @@ public class Chemin {
      * Affiche le chemin sur la console en affichant les coordonnées et les tuiles de chaque case.
      */
     public void afficherChemin() {
-        System.out.println("Chemin :");
         for (Case c : cases) {
             System.out.println("[" + c.getX() + ", " + c.getY() + "] : " + c.getTuile());
         }
