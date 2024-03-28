@@ -7,8 +7,13 @@ import java.util.*;
 
 public class AlgorithmeDijkstra<E> implements AlgorithmeChemin<E>{
 
-    private List<Noeud<E>> listeNoeuds;
-
+    /**
+     * Implémentation de la méthode trouverChemin adaptée à l'algorithme de Dijkstra
+     * @param graphe graphe avec lequel on travaille
+     * @param depart noeud de départ
+     * @param arrivee noeud d'arrivée
+     * @return
+     */
     @Override
     public List<Noeud<E>> trouverChemin(Graphe<E> graphe, Noeud<E> depart, Noeud<E> arrivee) {
 
@@ -28,7 +33,8 @@ public class AlgorithmeDijkstra<E> implements AlgorithmeChemin<E>{
         listeCouts.put(depart, 0.0);
 
         // File de priorité décidée par le coût de chaque noeud
-        PriorityQueue<Noeud<E>> priorityQueue = new PriorityQueue<>(Comparator.comparingDouble(listeCouts::get));
+//        PriorityQueue<Noeud<E>> priorityQueue = new PriorityQueue<>(Comparator.comparingDouble(listeCouts::get));
+        PriorityQueue<Noeud<E>> priorityQueue = new PriorityQueue<>((n1, n2) -> (int) (listeCouts.get(n1) - listeCouts.get(n2)));
 
         priorityQueue.add(depart);
 
@@ -41,8 +47,11 @@ public class AlgorithmeDijkstra<E> implements AlgorithmeChemin<E>{
              * Sinon, pour chaque voisin du nœud actuel on calcule le coût
              * pour atteindre ce voisin
              */
+            System.out.println("-----------Debug 1 :  " + graphe.getVoisins(noeud));
             for (Noeud<E> voisin : graphe.getVoisins(noeud)) {
                 double coutTotal = listeCouts.get(noeud) + graphe.getCoutArete(noeud, voisin);
+                System.out.println(coutTotal + "--------");
+
                 /*
                  * Si le coût est inférieur au coût du noeud voisin,
                  * on met à jour le coût du voisin et son prédécesseur
@@ -63,9 +72,11 @@ public class AlgorithmeDijkstra<E> implements AlgorithmeChemin<E>{
         Noeud<E> noeudCourant = arrivee;
 
         while(noeudCourant != null) {
-            chemin.addFirst(noeudCourant);
+            chemin.add(0, noeudCourant);
+//            chemin.addFirst(noeudCourant);
             noeudCourant = listeNoeuds.get(noeudCourant);
         }
+        Collections.reverse(chemin);
         return chemin;
     }
 }

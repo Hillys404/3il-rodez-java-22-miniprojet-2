@@ -53,7 +53,10 @@ public class AdaptateurAlgorithme {
                 if (i != x || j != y) {
                     Tuile tuile = carteCourante.getTuile(i, j);
                     Case caseVoisine = new Case(tuile, i, j);
+//                    Case caseVoisine = graphe.getNoeuds().get((x + i) * hauteur + (y + j)).getValeur();
+
                     double cout = calculerCout(caseCourante, caseVoisine);
+
                     // Cast les cases en Noeud
                     Noeud<Case> noeudCourant = new Noeud<>(caseCourante);
                     Noeud<Case> noeudVoisin = new Noeud<>(caseVoisine);
@@ -97,16 +100,19 @@ public class AdaptateurAlgorithme {
      */
     public static Chemin trouverChemin(AlgorithmeChemin<Case> algorithme, Carte carte,
                                        int xDepart, int yDepart, int xArrivee, int yArrivee) {
-        Graphe graphe = creerGraphe(carte);
-        Case depart = new Case(carte.getTuile(xDepart, xDepart), xDepart, xDepart);
-        Case arrivee = new Case(carte.getTuile(xArrivee, xArrivee), xArrivee, xArrivee);
+        Graphe<Case> graphe = creerGraphe(carte);
+        Case depart = new Case(carte.getTuile(xDepart, yDepart), xDepart, yDepart);
+        Case arrivee = new Case(carte.getTuile(xArrivee, yArrivee), xArrivee, yArrivee);
 
         // Recherche du meilleur chemin
         List<Noeud<Case>> noeuds = algorithme.trouverChemin(graphe, new Noeud<>(depart), new Noeud<>(arrivee));
 
         // Conversion des noeuds en case pour créer le chemin
+        int i = 0;
         List<Case> cases = new ArrayList<>();
         for(Noeud<Case> noeud : noeuds) {
+            System.out.println("Index du noeud : " + i++);
+            System.out.println("Valeur du noeud : " + noeud.getValeur());
             cases.add(noeud.getValeur());
         }
 
