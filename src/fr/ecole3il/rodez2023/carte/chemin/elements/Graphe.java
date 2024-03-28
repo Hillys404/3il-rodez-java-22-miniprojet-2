@@ -38,7 +38,7 @@ public class Graphe<E> {
          * Vérification de l'existence des noeuds depart et arrivee
          * Ajout des noeuds s'ils n'existent pas
          */
-        if(!listeNoeuds.containsKey(depart)) ajouterNoeud(depart);
+        if (!listeNoeuds.containsKey(depart)) ajouterNoeud(depart);
         if (!listeNoeuds.containsKey(arrivee)) ajouterNoeud(arrivee);
 
         // Liaison des deux noeuds
@@ -55,7 +55,7 @@ public class Graphe<E> {
         if (listeNoeuds.containsKey(depart) && listeNoeuds.get(depart).containsKey(arrivee)) {
             return this.listeNoeuds.get(depart).get(arrivee);
         }
-        return -1;
+        return Double.MAX_VALUE;
     }
 
     /**
@@ -72,6 +72,10 @@ public class Graphe<E> {
      * @return liste des noeuds voisins du noeud donné
      */
     public List<Noeud<E>> getVoisins(Noeud<E> noeud) {
-        return noeud.getVoisins();
+        if (listeNoeuds.containsKey(noeud)) {
+            return new ArrayList<>(listeNoeuds.get(noeud).keySet());
+//            return noeud.getVoisins();
+        }
+        return new ArrayList<>();
     }
 }
