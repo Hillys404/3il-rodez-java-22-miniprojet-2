@@ -33,7 +33,6 @@ public class AlgorithmeDijkstra<E> implements AlgorithmeChemin<E>{
         listeCouts.put(depart, 0.0);
 
         // File de priorité décidée par le coût de chaque noeud
-//        PriorityQueue<Noeud<E>> priorityQueue = new PriorityQueue<>(Comparator.comparingDouble(listeCouts::get));
         PriorityQueue<Noeud<E>> priorityQueue = new PriorityQueue<>((n1, n2) -> (int) (listeCouts.get(n1) - listeCouts.get(n2)));
 
         priorityQueue.add(depart);
@@ -47,10 +46,8 @@ public class AlgorithmeDijkstra<E> implements AlgorithmeChemin<E>{
              * Sinon, pour chaque voisin du nœud actuel on calcule le coût
              * pour atteindre ce voisin
              */
-            System.out.println("-----------Debug 1 :  " + graphe.getVoisins(noeud));
             for (Noeud<E> voisin : graphe.getVoisins(noeud)) {
                 double coutTotal = listeCouts.get(noeud) + graphe.getCoutArete(noeud, voisin);
-                System.out.println(coutTotal + "--------");
 
                 /*
                  * Si le coût est inférieur au coût du noeud voisin,
@@ -73,7 +70,6 @@ public class AlgorithmeDijkstra<E> implements AlgorithmeChemin<E>{
 
         while(noeudCourant != null) {
             chemin.add(0, noeudCourant);
-//            chemin.addFirst(noeudCourant);
             noeudCourant = listeNoeuds.get(noeudCourant);
         }
         Collections.reverse(chemin);
