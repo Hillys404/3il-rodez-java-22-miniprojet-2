@@ -31,7 +31,6 @@ public class CarteGUI extends JFrame {
 	private Case caseDepart;
 	private Case caseArrivee;
 	private AlgorithmeChemin algorithme;
-	private AdaptateurAlgorithme adaptateurAlgorithme;
 
 	public CarteGUI(Carte carte) {
 		this.carte = carte;
@@ -114,7 +113,8 @@ public class CarteGUI extends JFrame {
 		}
 
 		if (caseDepart != null && caseArrivee != null) {
-			Chemin chemin = adaptateurAlgorithme.trouverChemin(algorithme, carte, caseDepart.getX(), caseDepart.getY(), caseArrivee.getX(),
+			trouverChemin();
+			Chemin chemin = AdaptateurAlgorithme.trouverChemin(algorithme, carte, caseDepart.getX(), caseDepart.getY(), caseArrivee.getX(),
 					caseArrivee.getY());
 			g.setColor(Color.RED);
 			for (Case c : chemin.getCases()) {
@@ -124,14 +124,9 @@ public class CarteGUI extends JFrame {
 	}
 
 	private void trouverChemin() {
-		if (caseDepart != null && caseArrivee != null) {
-			Chemin chemin = adaptateurAlgorithme.trouverChemin(algorithme, carte, caseDepart.getX(), caseDepart.getY(), caseArrivee.getX(),
-					caseArrivee.getY());
-			System.out.println("Chemin le plus court :");
-			for (Case c : chemin.getCases()) {
-				System.out.println("[" + c.getX() + ", " + c.getY() + "]");
-			}
-		}
+		Chemin chemin = AdaptateurAlgorithme.trouverChemin(algorithme, carte, caseDepart.getX(), caseDepart.getY(), caseArrivee.getX(), caseArrivee.getY());
+		System.out.println("Chemin le plus court :");
+		chemin.afficherChemin();
 	}
 
 	private BufferedImage getTuileImage(Tuile tuile) {
@@ -163,8 +158,7 @@ public class CarteGUI extends JFrame {
 //		Tuile[][] tuiles = new Tuile[][] { { Tuile.DESERT, Tuile.MONTAGNES, Tuile.PLAINE },
 //				{ Tuile.FORET, Tuile.DESERT, Tuile.PLAINE }, { Tuile.PLAINE, Tuile.MONTAGNES, Tuile.FORET } };
 
-		GenerateurCarte gen = new GenerateurCarte();
-		Carte carte = gen.genererCarte(10, 10); // new Carte(tuiles);
+		Carte carte = GenerateurCarte.genererCarte(10, 10); // new Carte(tuiles);
 
 		// Créer et afficher l'interface graphique
 		SwingUtilities.invokeLater(() -> {
