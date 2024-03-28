@@ -32,9 +32,6 @@ public class Noeud<E> {
      * Modifie la valeur du noeud
      * @return
      */
-    public void setValeur(E valeur) {
-        this.valeur = valeur;
-    }
 
     /**
      * Récupère les noeuds voisins du noeud courant
