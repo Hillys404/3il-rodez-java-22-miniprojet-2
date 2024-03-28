@@ -13,28 +13,31 @@ import java.util.List;
 
 public class AdaptateurAlgorithme {
 
-    private static Carte carteCourante;
-
     /**
      * Création du graphe à l'aide d'une carte
      * @param carte la carte fournie
      * @return le graphe créé
      */
     private static Graphe<Case> creerGraphe(Carte carte) {
-        carteCourante = carte;
         Graphe<Case> graphe = new Graphe<>();
 
         for (int x = 0; x < carte.getLargeur(); x++) {
             for (int y = 0; y < carte.getHauteur(); y++) {
 
-                Tuile tuile = carte.getTuile(x, y);
-                Case caseCourante = new Case(tuile, x, y);
-                Noeud<Case> noeudCourant = new Noeud<>(caseCourante);
-                graphe.ajouterNoeud(noeudCourant);
+                Case caseCourante = new Case(carte.getTuile(x, y), x, y);
+                graphe.ajouterNoeud(new Noeud<>(caseCourante));
 
+//                ajouterAretesVoisines(graphe, caseCourante, x, y, carte.getLargeur(), carte.getHauteur());
+            }
+        }
+
+        for (int x = 0; x < carte.getLargeur(); x++) {
+            for (int y = 0; y < carte.getHauteur(); y++) {
+                Case caseCourante = new Case(carte.getTuile(x, y), x, y);
                 ajouterAretesVoisines(graphe, caseCourante, x, y, carte.getLargeur(), carte.getHauteur());
             }
         }
+
         return graphe;
     }
 
@@ -48,19 +51,45 @@ public class AdaptateurAlgorithme {
      * @param hauteur du graphe
      */
     private static void ajouterAretesVoisines(Graphe<Case> graphe, Case caseCourante, int x, int y, int largeur, int hauteur) {
-        for (int i = Math.max(0, x - 1); i <= Math.min(x + 1, largeur - 1); i++) {
-            for (int j = Math.max(0, y - 1); j <= Math.min(y + 1, hauteur - 1); j++) {
-                if (i != x || j != y) {
-                    Tuile tuile = carteCourante.getTuile(i, j);
-                    Case caseVoisine = new Case(tuile, i, j);
-//                    Case caseVoisine = graphe.getNoeuds().get((x + i) * hauteur + (y + j)).getValeur();
+//        for (int i = Math.max(0, x - 1); i <= Math.min(x + 1, largeur - 1); i++) {
+//            for (int j = Math.max(0, y - 1); j <= Math.min(y + 1, hauteur - 1); j++) {
+//                if (i != x || j != y) {
+//                    Tuile tuile = carteCourante.getTuile(i, j);
+//                    Case caseVoisine = new Case(tuile, i, j);
+//                    double cout = calculerCout(caseCourante, caseVoisine);
+//
+//                    // Cast les cases en Noeud
+//                    Noeud<Case> noeudCourant = new Noeud<>(caseCourante);
+//                    Noeud<Case> noeudVoisin = new Noeud<>(caseVoisine);
+//                    noeudCourant.ajouterVoisins(noeudVoisin);
+//                    graphe.ajouterArete(noeudCourant, noeudVoisin, cout);
+//                }
+//            }
+//        }
 
-                    double cout = calculerCout(caseCourante, caseVoisine);
+        Noeud<Case> noeudCourant = null;
+        for (Noeud<Case> noeud : graphe.getNoeuds()) {
+            Case case1 = noeud.getValeur();
+            if (case1.equals(caseCourante)) {
+                noeudCourant = noeud;
+                break;
+            }
+        }
 
-                    // Cast les cases en Noeud
-                    Noeud<Case> noeudCourant = new Noeud<>(caseCourante);
-                    Noeud<Case> noeudVoisin = new Noeud<>(caseVoisine);
-                    graphe.ajouterArete(noeudCourant, noeudVoisin, cout);
+        if (noeudCourant != null) {
+            int[][] directions = {{0, 1}, {1, 0}, {0, -1}, {-1, 0}};
+            for (int[] direction : directions) {
+                int newX = x + direction[0];
+                int newY = y + direction[1];
+
+                if (newX >= 0 && newX < largeur && newY >= 0 && newY < hauteur) {
+                    Noeud<Case> noeudVoisin = getNoeud(graphe,newX, newY);
+                    if (noeudVoisin != null) {
+                        Case neighborCase = noeudVoisin.getValeur();
+                        double cost = calculerCout(caseCourante, neighborCase);
+                        graphe.ajouterArete(noeudCourant, noeudVoisin, cost);
+                        noeudCourant.ajouterVoisins(noeudVoisin);
+                    }
                 }
             }
         }
@@ -84,6 +113,8 @@ public class AdaptateurAlgorithme {
      */
     private static void afficherChemin(List<Noeud<Case>> chemin) {
         for (Noeud<Case> noeud : chemin) {
+            Case caseActuelle = noeud.getValeur();
+            System.out.println("Case: x = " + caseActuelle.getX() + ", y = " + caseActuelle.getY());
             System.out.println(noeud.getValeur());
         }
     }
@@ -104,20 +135,29 @@ public class AdaptateurAlgorithme {
         Case depart = new Case(carte.getTuile(xDepart, yDepart), xDepart, yDepart);
         Case arrivee = new Case(carte.getTuile(xArrivee, yArrivee), xArrivee, yArrivee);
 
+        Noeud<Case> noeudDepart = getNoeud(graphe, xDepart, yDepart);
+        Noeud<Case> noeudArrivee = getNoeud(graphe, xArrivee, yArrivee);
+
         // Recherche du meilleur chemin
-        List<Noeud<Case>> noeuds = algorithme.trouverChemin(graphe, new Noeud<>(depart), new Noeud<>(arrivee));
+        List<Noeud<Case>> noeuds = algorithme.trouverChemin(graphe, noeudDepart, noeudArrivee);
+//        List<Noeud<Case>> noeuds = algorithme.trouverChemin(graphe, new Noeud<>(depart), new Noeud<>(arrivee));
 
         // Conversion des noeuds en case pour créer le chemin
-        int i = 0;
         List<Case> cases = new ArrayList<>();
         for(Noeud<Case> noeud : noeuds) {
-            System.out.println("Index du noeud : " + i++);
-            System.out.println("Valeur du noeud : " + noeud.getValeur());
             cases.add(noeud.getValeur());
         }
 
-        afficherChemin(noeuds);
-
         return new Chemin(cases);
+    }
+
+    private static Noeud<Case> getNoeud(Graphe graphe,int x, int y) {
+        for (Object noeud : graphe.getNoeuds()) {
+            Case caseCourante = (Case) ((Noeud)noeud).getValeur();
+            if (caseCourante.getX() == x && caseCourante.getY() == y) {
+                return (Noeud<Case>)noeud;
+            }
+        }
+        return null;
     }
 }
